@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartão de Dia dos Namorados - Jornada Mágica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #e91e63; /* Rosa principal */
+            --color-secondary: #c2185b; /* Rosa escuro */
+            --color-accent: #ff80ab;   /* Rosa claro para acentos */
+            --color-mystery: #8e24aa; /* Roxo para o enigma */
+            --color-final: #d32f2f;    /* Vermelho para o final */
+            --color-text-light: #f8f8f8;
+            --color-text-dark: #333;
+            --transition-speed-slow: 1.2s;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            color: var(--color-text-dark);
+            background-color: #1a1a2e; /* Fundo escuro para um toque mágico */
+            overflow-x: hidden; /* Prevenir scroll horizontal */
+        }
+
+        .main-container {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .scroll-section {
+            min-height: 100vh; /* Ocupa a altura total da viewport */
+            width: 100vw;     /* Ocupa a largura total da viewport */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 5vh 5vw; /* Padding responsivo */
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: opacity var(--transition-speed-slow) cubic-bezier(0.25, 0.1, 0.25, 1),
+                        transform var(--transition-speed-slow) cubic-bezier(0.25, 0.1, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-section.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Fundos e Estilos Específicos por Seção */
+        #section1 { background: linear-gradient(135deg, #16222A 0%, #3A6073 100%); }
+        #section2 { background: linear-gradient(135deg, #3A6073 0%, #5f2c82 100%); }
+        #section3 { background: linear-gradient(135deg, #5f2c82 0%, #c94b4b 100%); }
+        #section4 { background: linear-gradient(135deg, #c94b4b 0%, var(--color-primary) 100%); }
+        #section5 { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); }
+        #section6 { background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-mystery) 100%); }
+        #section7 { background: linear-gradient(135deg, var(--color-mystery) 0%, var(--color-final) 100%); }
+
+
+        /* Elementos de Texto Animados */
+        .section-title, .section-subtitle, .user-text, .user-image, .surprise-text, .enigma-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s;
+        }
+        .is-visible .section-title,
+        .is-visible .section-subtitle,
+        .is-visible .user-text,
+        .is-visible .user-image,
+        .is-visible .surprise-text,
+        .is-visible .enigma-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .is-visible .user-text p,
+        .is-visible .enigma-text p {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeInText 0.6s ease-out forwards;
+        }
+        .is-visible .user-text p:nth-child(1), .is-visible .enigma-text p:nth-child(1) { animation-delay: 0.6s; }
+        .is-visible .user-text p:nth-child(2), .is-visible .enigma-text p:nth-child(2) { animation-delay: 0.8s; }
+        .is-visible .user-text p:nth-child(3), .is-visible .enigma-text p:nth-child(3) { animation-delay: 1.0s; }
+        .is-visible .enigma-text p:nth-child(4) { animation-delay: 1.2s; }
+        .is-visible .enigma-text p:nth-child(5) { animation-delay: 1.4s; }
+
+
+        @keyframes fadeInText {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.2rem, 10vw, 4.5rem); 
+            color: var(--color-text-light);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        #section1 .section-title { font-size: clamp(2.5rem, 12vw, 5rem); }
+
+
+        .section-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            font-size: clamp(1rem, 4vw, 1.8rem);
+            color: var(--color-text-light);
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .user-text, .enigma-text {
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            color: var(--color-text-light);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            max-width: 650px;
+            padding: 0 10px;
+            font-weight: 300;
+        }
+        .enigma-text {
+             font-family: 'Dancing Script', cursive;
+             font-size: clamp(1.2rem, 5vw, 1.8rem);
+             line-height: 2;
+             margin-top: 20px;
+        }
+
+        .user-image {
+            max-width: clamp(250px, 80vw, 450px);
+            max-height: 50vh;
+            border-radius: 15px;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        #section7 .surprise-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 12vw, 5rem);
+            font-weight: 700;
+            color: var(--color-text-light);
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        .stars-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+            opacity: 0;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .heart-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .heart {
+            position: absolute;
+            width: 25px; height: 25px;
+            opacity: 0;
+            animation: magicalRise 8s linear infinite;
+        }
+        .heart div { width: 100%; height: 100%; transform: rotate(-45deg); position: relative; }
+        .heart div::before, .heart div::after {
+            content: ""; position: absolute; width: 25px; height: 25px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        .heart div::before { top: -12.5px; left: 0; }
+        .heart div::after { top: 0; left: -12.5px; }
+
+        @keyframes magicalRise {
+            0% { transform: translateY(105vh) scale(0.3) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) scale(1.5) rotate(720deg); opacity: 0;}
+        }
+
+        .scroll-hint-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        .scroll-hint-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .scroll-hint {
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .scroll-hint span {
+            font-size: 2rem;
+            display: block;
+            animation: subtleBounce 2.5s infinite ease-in-out;
+        }
+        @keyframes subtleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .initial-loading {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #1a1a2e;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease 0.5s;
+        }
+        .initial-loading.hidden { opacity: 0; pointer-events: none; }
+        .initial-loading p { color: white; font-family: 'Dancing Script'; font-size: 2rem; }
+
+    </style>
+</head>
+<body>
+    <div class="initial-loading" id="initialLoading">
+        <p>A preparar uma surpresa mágica...</p>
+    </div>
+
+    <div class="main-container">
+        <div class="scroll-hint-container" id="scrollHintContainer">
+            <div class="scroll-hint">
+                Role para descobrir
+                <span>&darr;</span>
+            </div>
+        </div>
+
+        <!-- ====================================================================== -->
+        <!-- SECÇÃO 1: CAPA MÁGICA                                                -->
+        <!-- ====================================================================== -->
+        <section class="scroll-section" id="section1">
+            <div class="stars-bg" id="starsBg1"></div>
+            <h2 class="section-subtitle">Feliz dia dos namorados!,</h2>
+            <h1 class="section-title">Meu amor <3</h1>
+            <p class="user-text">Neste dia especial, quero levar-te a recordar como chegámos aqui</p>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!-- SECÇÃO 2: O HAPPY HOUR                                               -->
+        <!-- ====================================================================== -->
+        <section class="scroll-section" id="section2">
+            <div class="stars-bg" id="starsBg2"></div>
+            <h2 class="section-title">O Happy Hour</h2>
+            
+            <div class="user-text">
+                <p>Era uma vez um menino chamado Gabriel, inocente a partilhar um momento com a turma num happy hour...</p>
+                <p>E uma linda mulher ruiva, geek, chamada Denise Leon, estava bebinha rsrs e flirtou com o nobre Gabriel.</p>
+                <p>Ele, nada bobo, beijou-a e assim começou...</p>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!-- SECÇÃO 3: A TORRE                                                    -->
+        <!-- ====================================================================== -->
+        <section class="scroll-section" id="section3">
+            <div class="stars-bg" id="starsBg3"></div>
+            <h2 class="section-title">A torre</h2>
+            <img src="https://i.imgur.com/69qMrLP.jpeg" alt="Imagem de um casal numa ponte vermelha, com a mulher à frente a sorrir" class="user-image">
+            <div class="user-text">
+                <p>Aaah a nossa primeira viagem!</p>
+                <p>Nós vimos tantas coisas, foi quando falei que você era meu porto seguro.</p>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!-- SECÇÃO 4: TE AMO                                                     -->
+        <!-- ====================================================================== -->
+        <section class="scroll-section" id="section4">
+            <div class="stars-bg" id="starsBg4"></div>
+            <h2 class="section-title">[texto] Te amo...</h2>
+            <img src="https://i.imgur.com/7RczuTN.jpeg" alt="Imagem de um casal com pinturas faciais neon a sorrir para a câmara" class="user-image">
+            <div class="user-text">
+                <p>Esse dia não vou esquecer... depois que pintamos fomos para um barzinho</p>
+                <p>Seu olhos brilhavam e você digitou que achava que me amava (ignorei o achava)</p>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!-- SECÇÃO 5: PARCEIRA DA MINHA VIDA                                     -->
+        <!-- ====================================================================== -->
+        <section class="scroll-section" id="section5">
+            <div class="stars-bg" id="starsBg5"></div>
+            <h2 class="section-title">Parceira da minha vida</h2>
+            <img src="https://i.imgur.com/ZAOaU46.jpeg" alt="Imagem de um casal sentado na relva perto da água, a sorrir e a olhar um para o outro" class="user-image">
+            <div class="user-text">
+                <p>Vivemos varios momentos juntos e amo todos eles e tem muito mais pela frente</p>
+                <p>Essa foto representa tudo isso e o quanto te amo, me sinto um bobo apaixonado</p>
+                <p>Te amo muito, Mamacita (kkkkk)</p>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!-- SECÇÃO 6: O ENIGMA DA SURPRESA                                       -->
+        <!-- ====================================================================== -->
+        <section class="scroll-section" id="section6">
+            <div class="stars-bg" id="starsBg6"></div>
+            <h2 class="section-title">O Enigma da Surpresa</h2>
+            <div class="enigma-text">
+                <p>Onde a magia reside e os sonhos ganham forma,</p>
+                <p>Um tesouro espera, guardado no alto.</p>
+                <p>Entre contos de fadas e canções a bailar,</p>
+                <p>Lá onde uma rosa por amor fez uma Fera encantar,</p>
+                <p>A tua beleza encontrará um novo matiz, um toque de cor para um final feliz.</p>
+            </div>
+            <p class="user-text" style="margin-top: 30px; font-size: 0.9rem;">Desvenda o mistério, meu amor, e encontra o que preparei para ti!</p>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!-- SECÇÃO 7: SURPRESA FINAL                                             -->
+        <!-- ====================================================================== -->
+        <section class="scroll-section" id="section7">
+            <div class="heart-container" id="heartContainer"></div>
+            <div class="stars-bg" id="starsBg7"></div>
+            <h2 class="section-title">Feliz Dia dos Namorados, meu amor!</h2>
+            <p class="surprise-text">Você é a magia da minha vida!</p>
+        </section>
+    </div>
+
+    <script>
+        const sections = document.querySelectorAll('.scroll-section');
+        const heartContainer = document.getElementById('heartContainer');
+        const scrollHintContainer = document.getElementById('scrollHintContainer');
+        const initialLoadingScreen = document.getElementById('initialLoading');
+        let heartsInterval;
+        let heartsActive = false;
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                initialLoadingScreen.classList.add('hidden');
+            }, 1500);
+        });
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.3
+        };
+
+        const observerCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    if (entry.target.id === 'section7' && !heartsActive) {
+                        startHeartRain();
+                    }
+                } else {
+                    entry.target.classList.remove('is-visible');
+                }
+            });
+        };
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        sections.forEach(section => observer.observe(section));
+
+        function createStars(containerId, count = 50) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.width = `${Math.random() * 2 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                star.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                container.appendChild(star);
+            }
+        }
+        createStars('starsBg1', 70);
+        createStars('starsBg2', 50);
+        createStars('starsBg3', 60);
+        createStars('starsBg4', 70);
+        createStars('starsBg5', 70); 
+        createStars('starsBg6', 80); 
+        createStars('starsBg7', 120);
+
+        function createHeart() {
+            if (!document.hidden && heartContainer && heartsActive) { 
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = `${Math.random() * 95 + 2.5}%`;
+                const duration = Math.random() * 5 + 6;
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `${Math.random() * 3}s`;
+
+                const heartShape = document.createElement('div');
+                heart.appendChild(heartShape);
+                const scale = Math.random() * 0.5 + 0.7;
+                heartShape.style.transform = `scale(${scale})`; 
+                heartShape.style.opacity = Math.random() * 0.5 + 0.5;
+
+                heartContainer.appendChild(heart);
+                setTimeout(() => {
+                    if(heart && heart.parentNode) {
+                        heart.remove();
+                    }
+                }, duration * 1000 + 3000);
+            }
+        }
+
+        function startHeartRain() {
+            if (heartContainer && !heartsInterval) {
+                heartsActive = true;
+                heartContainer.innerHTML = '';
+                for(let i=0; i < 20; i++) {
+                    setTimeout(createHeart, i * 80);
+                }
+                heartsInterval = setInterval(createHeart, 500);
+            }
+        }
+
+        function stopHeartRain() {
+            clearInterval(heartsInterval);
+            heartsInterval = null;
+            heartsActive = false;
+        }
+
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let st = window.pageYOffset || document.documentElement.scrollTop;
+            if (st > lastScrollTop && st > 100) {
+                scrollHintContainer.classList.add('hidden');
+            } 
+            else if (st < lastScrollTop && st < 50) {
+                 scrollHintContainer.classList.remove('hidden');
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+        }, false);
+
+
+        document.addEventListener('visibilitychange', function() {
+            const section7 = document.getElementById('section7');
+            if (document.hidden) {
+                if (heartsActive) stopHeartRain(); 
+            } else {
+                if (section7 && section7.classList.contains('is-visible')) {
+                     if (!heartsInterval) startHeartRain(); 
+                }
+            }
+        });
+    </script>
+</body>
+</html>
